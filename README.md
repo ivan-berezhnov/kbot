@@ -4,7 +4,7 @@ Kbot is a simple Telegram bot written in Go.
 It uses [cobra](https://github.com/spf13/cobra) for the command-line interface
 and [telebot.v4](https://gopkg.in/telebot.v4) for the Telegram Bot API.
 
-Bot link: [t.me/BOT_NAME_bot](https://t.me/BOT_NAME_bot)
+Bot link: [t.me/ivokbot](https://t.me/ivokbot)
 
 ## Features
 
