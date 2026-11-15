@@ -76,7 +76,7 @@ go test ./...
 main.go              entry point
 cmd/root.go          root cobra command
 cmd/version.go       "version" command
-cmd/kbot.go          "kbot" / "start" command, creates the telebot.Bot
-cmd/handlers.go      message handlers
+cmd/kbot.go          "kbot" / "start" command: creates telebot.Bot, registers handlers
+cmd/handlers.go      reply logic for text messages
 cmd/handlers_test.go tests for the text replies
 ```

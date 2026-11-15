@@ -10,6 +10,12 @@ import (
 	telebot "gopkg.in/telebot.v4"
 )
 
+var (
+	// TeleToken is the Telegram bot token from the TELE_TOKEN environment variable.
+	TeleToken = os.Getenv("TELE_TOKEN")
+)
+
+// kbotCmd represents the kbot command.
 var kbotCmd = &cobra.Command{
 	Use:     "kbot",
 	Aliases: []string{"start"},
@@ -18,22 +24,43 @@ var kbotCmd = &cobra.Command{
 
 The bot token is read from the TELE_TOKEN environment variable.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		token := os.Getenv("TELE_TOKEN")
-		if token == "" {
+		if TeleToken == "" {
 			log.Fatal("TELE_TOKEN environment variable is not set")
 		}
 
 		fmt.Printf("kbot %s started\n", appVersion)
 
 		kbot, err := telebot.NewBot(telebot.Settings{
-			Token:  token,
+			URL:    "",
+			Token:  TeleToken,
 			Poller: &telebot.LongPoller{Timeout: 10 * time.Second},
 		})
 		if err != nil {
 			log.Fatalf("Please check TELE_TOKEN env variable. %s", err)
+			return
 		}
 
-		registerHandlers(kbot)
+		kbot.Handle("/start", func(m telebot.Context) error {
+			return m.Send(fmt.Sprintf("Hi, %s! I'm Kbot %s.\n\n%s", senderName(m), appVersion, helpText))
+		})
+
+		kbot.Handle("/help", func(m telebot.Context) error {
+			return m.Send(helpText)
+		})
+
+		kbot.Handle(telebot.OnText, func(m telebot.Context) error {
+			log.Printf("Received message: %s", m.Text())
+			return m.Send(replyToText(m.Text(), appVersion))
+		})
+
+		kbot.Handle(telebot.OnPhoto, func(m telebot.Context) error {
+			return m.Send("Nice photo! I can only read text for now.")
+		})
+
+		kbot.Handle(telebot.OnSticker, func(m telebot.Context) error {
+			return m.Send("Cool sticker! Send me \"hello\" to talk.")
+		})
+
 		kbot.Start()
 	},
 }
